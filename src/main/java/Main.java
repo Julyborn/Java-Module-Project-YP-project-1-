@@ -1,14 +1,13 @@
-import android.app.Person;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int persons = InputChecker.persons();
         List<Item> items = new ArrayList<>();
+        int persons = InputChecker.persons();
+        System.out.println("Тогда начнем заполнять список товаров!");
+
         while (true){
             items.add(Calculator.add());
             System.out.println("Для добавления ещё одного товара введите любой текст. Введите команду \"Завершить\" для того, чтоб завершить процесс добавления товаров. ");
@@ -16,15 +15,13 @@ public class Main {
                 break;
             }
         }
-        for (Item item : items) {
-            System.out.println(item.name);
-        }
         Calculator.count(items, persons);
     }
 }
 
 
 class InputChecker {
+    static String again = " Повторите попытку.";
     public static int persons() {
         int persons;
         Scanner scanner = new Scanner(System.in);
@@ -35,9 +32,10 @@ class InputChecker {
                 if (persons > 1) {
                     return (persons);
                 }
-                System.out.println("Количество человек должно быть больше 1.");
+                System.out.println("Количество человек должно быть больше 1." + again);
             } else {
-                System.out.println("Вы ввели не целое число.");
+                System.out.println("Вы ввели не целое число." + again);
+                scanner.nextLine();
             }
         }
     }
@@ -46,21 +44,22 @@ class InputChecker {
         float price;
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("Введите стоимость товара. Она должна быть в формате рубли.копейки:");
+            System.out.println("Введите стоимость товара:");
             if (scanner.hasNextFloat()) {
-                price = Math.round(scanner.nextFloat() * 100.0f) / 100.0f;//выкинул лишние знаки сейчас, что бы не было погрешности
+                price = Math.round(scanner.nextFloat() * 100.0f) / 100.0f;
                 if (price > 0.0f) {
                     return (price);
                 }
-                System.out.println("Стоимость должна быть больше 0.");
+                System.out.println("Стоимость должна быть больше 0." + again);
             } else if (scanner.hasNextInt()) {
                 price = (float)scanner.nextInt();
                 if (price > 0.0f) {
                     return (price);
                 }
-                System.out.println("Стоимость должна быть больше 0.");
+                System.out.println("Стоимость должна быть больше 0." + again);
             }else {
-                System.out.println("Вы ввели не стоимость в неверном формате.");
+                System.out.println("Вы ввели не стоимость в неверном формате." + again);
+                scanner.nextLine();
             }
         }
     }
@@ -92,7 +91,7 @@ class Calculator{
             System.out.println(item.name);
             sum = sum + item.price;
         }
-        remainder = (int) (sum % persons * 100.0f);
+        remainder = (int) ((sum * 100.0f) % persons);
         perPerson = sum / persons;
         roundedSum = Math.floor(sum);
         if (roundedSum == 1) {
@@ -102,8 +101,11 @@ class Calculator{
         } else {
             System.out.println(String.format("Каждый человек должен заплатить %.2f рублей.", perPerson));
         }
-        if (remainder != 0) {
-            System.out.println("К сожалению ровно поделить не выйдет и ещё " + remainder + " из них должны доплатить по копейке.");
+        if (remainder == 1) {
+            System.out.println("К сожалению ровно поделить не выйдет и один из них должен будет заплатить на копейку больше.");
+        }else if (remainder != 0){
+            System.out.println("К сожалению ровно поделить не выйдет и ещё " + remainder + " из людей должны будут заплатить на копейку больше.");
+
         }
     }
 }
